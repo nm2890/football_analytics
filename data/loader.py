@@ -10,5 +10,7 @@ def load_football_data() :
 
     print(df.head())
 
+    return(df)
+
 if __name__ == '__main__' :
     load_football_data()
