@@ -14,7 +14,7 @@ def compute_implied_odds(odds, model='uniform'):
 
     Available models :
     uniform : the margin is deduced in a uniform way for each odd
-    proportional : the margin is proportional to odds, see
+    proportional : the margin is proportional to odds, see https://www.football-data.co.uk/The_Wisdom_of_the_Crowd.pdf
 
     Output
 
@@ -23,9 +23,10 @@ def compute_implied_odds(odds, model='uniform'):
 
     TO DO
     -------
-    Add more models !
-    Be able to deal with different odds format
-    check if all odds are in acceptable format
+    - Add more models !
+    - Be able to deal with different odds format
+    - check if all odds are in acceptable format
+    - proportional model returns uncoherent results (odd < 0) when BM odd >> 30
     """
 
     odds = np.array(odds)
@@ -37,7 +38,7 @@ def compute_implied_odds(odds, model='uniform'):
     if model == 'uniform':
       implied_odds = odds * np.reshape(1 + margin, (margin.shape[0], 1))
     elif model == 'proportional':
-      implied_odds = nb_odds * odds / (nb_odds - np.reshape(margin, (margin.shape[0], 1)) * odds)
+      implied_odds = np.multiply(nb_odds,odds) / (nb_odds - np.multiply(np.reshape(margin, (margin.shape[0], 1)) , odds))
     else :
       raise Exception(f"Model {model} not implemented")
 
