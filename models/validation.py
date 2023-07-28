@@ -2,7 +2,7 @@ from sklearn.metrics import log_loss
 import numpy as np
 
 
-def model_validation(y_true, y_pred, odds):
+def model_validation(y_true, y_pred, odds, bet_treshold):
     """
     Compute some metrics in order to evaluate a model
 
@@ -37,9 +37,19 @@ def model_validation(y_true, y_pred, odds):
     metrics_validation['model_logloss'] = log_loss(y_true, y_pred)
     metrics_validation['bm_logloss'] = log_loss(y_true, prob_odds)
 
-    # betting simulation
+    # blind betting simulation
     gain = np.multiply(y_true, odds)
     pl = gain - 1
-    metrics_validation['ROI'] = pl.sum() / len(pl)
+    metrics_validation['ROI_Blind'] = pl.sum() / len(pl)
 
-    return (metrics_validation)
+    # betting on values
+    odds_pred = [1 / pred for pred in y_pred]
+    values = odds / odds_pred
+    values_mask = values > bet_treshold
+    y_true_values = y_true[values_mask]
+    odds_values = odds[values_mask]
+    gain = np.multiply(y_true_values, odds_values)
+    pl = gain - 1
+    metrics_validation['ROI_Model'] = pl.sum() / len(pl)
+
+    return metrics_validation
